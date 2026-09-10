@@ -1,20 +1,74 @@
 import { Router } from "express";
-import { getClients , getClientById , createClient , updateClient , getInactiveClients , deleteClient , restoreClient } from "../controllers/client.controller";
+
+import {
+    getClients,
+    getClientById,
+    createClient,
+    updateClient,
+    getInactiveClients,
+    deleteClient,
+    restoreClient,
+} from "../controllers/client.controller";
+
+import { authenticate } from "../middleware/auth.middleware";
+import { authorize } from "../middleware/authorize.middleware";
 
 const router = Router();
 
-router.get("/", getClients);
+// Get all clients
+router.get(
+    "/",
+    authenticate,
+    authorize("ADMIN", "EMPLOYEE"),
+    getClients
+);
 
-router.get("/inactive" , getInactiveClients);
+// Get inactive clients
+router.get(
+    "/inactive",
+    authenticate,
+    authorize("ADMIN", "EMPLOYEE"),
+    getInactiveClients
+);
 
-router.get('/:id' , getClientById);
+// Get client by ID
+router.get(
+    "/:id",
+    authenticate,
+    authorize("ADMIN", "EMPLOYEE"),
+    getClientById
+);
 
-router.post("/" , createClient);
+// Create client
+router.post(
+    "/",
+    authenticate,
+    authorize("ADMIN", "EMPLOYEE"),
+    createClient
+);
 
-router.patch("/:id" , updateClient);
+// Update client
+router.patch(
+    "/:id",
+    authenticate,
+    authorize("ADMIN", "EMPLOYEE"),
+    updateClient
+);
 
-router.delete("/:id", deleteClient);
+// Soft delete client
+router.delete(
+    "/:id",
+    authenticate,
+    authorize("ADMIN"),
+    deleteClient
+);
 
-router.patch("/:id/restore", restoreClient);
+// Restore client
+router.patch(
+    "/:id/restore",
+    authenticate,
+    authorize("ADMIN"),
+    restoreClient
+);
 
 export default router;

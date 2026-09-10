@@ -20,6 +20,7 @@ enum Role {
 
 enum OrderStatus {
   PENDING
+  APPROVED
   IN_PROGRESS
   COMPLETED
   CANCELLED
@@ -71,7 +72,6 @@ model Employee {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  managedOrders    Order[]           @relation("EmployeeOrders")
   projectEmployees ProjectEmployee[]
 
   @@map("employees")
@@ -97,20 +97,17 @@ model Client {
 model Order {
   id            String             @id @default(uuid())
   clientId      String             @map("client_id")
-  employeeId    String?            @map("employee_id")
   status        OrderStatus        @default(PENDING)
   totalPrice    Decimal            @map("total_price") @db.Decimal(10, 2)
   paymentStatus OrderPaymentStatus @default(UNPAID) @map("payment_status")
-
-  startDate DateTime? @map("start_date")
-  endDate   DateTime? @map("end_date")
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
+  startDate     DateTime?          @map("start_date")
+  endDate       DateTime?          @map("end_date")
+  createdAt     DateTime           @default(now()) @map("created_at")
+  updatedAt     DateTime           @updatedAt @map("updated_at")
 
   client     Client      @relation(fields: [clientId], references: [id])
-  employee   Employee?   @relation("EmployeeOrders", fields: [employeeId], references: [id], onDelete: SetNull)
   orderItems OrderItem[]
-  project    Project?
+  projects   Project[]
 
   @@map("orders")
 }
@@ -144,7 +141,7 @@ model OrderItem {
 
 model Project {
   id        String        @id @default(uuid())
-  orderId   String        @unique @map("order_id")
+  orderId   String        @map("order_id")
   name      String
   status    ProjectStatus @default(PLANNING)
   startDate DateTime?     @map("start_date")
