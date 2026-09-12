@@ -6,7 +6,7 @@ export default function PublicLayout() {
 
   const navItems = [
     { to: "/", label: "Home" },
-    { to: "/services", label: "Services" },
+    { to: "/explore/services", label: "Services" },
     { to: "/login", label: "Login" },
     { to: "/register", label: "Get Started" },
   ];

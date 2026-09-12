@@ -7,6 +7,7 @@ import Services from "./pages/Services/Services";
 import Clients from "./pages/Clients/Clients";
 import Employees from "./pages/Employees/Employees";
 import Orders from "./pages/Orders/Orders";
+import OrderDetails from "./pages/Orders/OrderDetails";
 import Projects from "./pages/Projects/Projects";
 import AppLayout from "./layout/AppLayout";
 import PublicLayout from "./layout/PublicLayout";
@@ -17,6 +18,7 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import RoleRoute from "./components/auth/RoleRoute";
+import Settings from "./pages/Settings/Settings";
 
 export default function App() {
   return (
@@ -26,8 +28,8 @@ export default function App() {
       <Routes>
         <Route element={<PublicLayout />}>
           <Route path="/" element={<PublicHome />} />
-          <Route path="/services" element={<PublicServices />} />
-          <Route path="/services/:id" element={<PublicServiceDetail />} />
+          <Route path="/explore/services" element={<PublicServices />} />
+          <Route path="/explore/services/:id" element={<PublicServiceDetail />} />
           <Route path="/login" element={<SignIn />} />
           <Route path="/register" element={<SignUp />} />
         </Route>
@@ -62,9 +64,7 @@ export default function App() {
             {/* Admin only */}
             <Route
               element={
-                <RoleRoute
-                  allowedRoles={["ADMIN", "EMPLOYEE", "CLIENT"]}
-                />
+                <RoleRoute allowedRoles={["ADMIN"]} />
               }
             >
               <Route path="/employees" element={<Employees />} />
@@ -86,10 +86,30 @@ export default function App() {
               }
             >
               <Route path="/orders" element={<Orders />} />
+              <Route path="/orders/:id" element={<OrderDetails />} />
             </Route>
 
-            {/* Services */}
-            <Route path="/dashboard/services" element={<Services />} />
+            {/* Services — Admin + Employee + Client */}
+            <Route
+              element={
+                <RoleRoute
+                  allowedRoles={["ADMIN", "EMPLOYEE", "CLIENT"]}
+                />
+              }
+            >
+              <Route path="/services" element={<Services />} />
+            </Route>
+
+            {/* Settings — All authenticated users */}
+            <Route
+              element={
+                <RoleRoute
+                  allowedRoles={["ADMIN", "EMPLOYEE", "CLIENT"]}
+                />
+              }
+            >
+              <Route path="/settings" element={<Settings />} />
+            </Route>
           </Route>
         </Route>
 

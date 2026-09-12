@@ -65,10 +65,6 @@ export const updateOrderSchema = z.object({
             })
         )
         .min(1, "Order must contain at least one item")
-        .refine(
-            (items) => new Set(items.map((item) => item.serviceId)).size === items.length,
-            "Each service can only be added once"
-        )
         .optional(),
     startDate: z
         .string()

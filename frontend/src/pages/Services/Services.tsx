@@ -12,6 +12,7 @@ import {
     updateService,
     type Service,
 } from "../../services/service.service";
+import { addDraftItem } from "../../utils/orderDraft";
 
 
 export default function Services() {
@@ -359,9 +360,10 @@ export default function Services() {
                                                 {user?.role === "CLIENT" && (
                                                     <button
                                                         type="button"
-                                                        onClick={() =>
-                                                            navigate(`/orders?serviceId=${service.id}`)
-                                                        }
+                                                        onClick={() => {
+                                                            addDraftItem(service.id);
+                                                            navigate(`/orders?serviceId=${service.id}`);
+                                                        }}
                                                         className="text-sm font-medium text-brand-500 hover:text-brand-600"
                                                     >
                                                         Request Service

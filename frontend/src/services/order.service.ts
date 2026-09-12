@@ -36,6 +36,17 @@ export type OrderItem = {
     service: OrderService;
 };
 
+export type OrderProjectEmployee = {
+    employeeId: string;
+    role?: string | null;
+    employee: {
+        id: string;
+        fname: string;
+        lname: string;
+        jobTitle: string;
+    };
+};
+
 export type OrderProject = {
     id: string;
     orderId: string;
@@ -43,6 +54,7 @@ export type OrderProject = {
     status: "PLANNING" | "IN_PROGRESS" | "COMPLETED" | "ON_HOLD";
     startDate?: string | null;
     endDate?: string | null;
+    projectEmployees?: OrderProjectEmployee[];
 };
 
 export type Order = {

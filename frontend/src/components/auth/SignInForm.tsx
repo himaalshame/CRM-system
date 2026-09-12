@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
@@ -8,16 +8,32 @@ import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
 import { login } from "../../services/auth.service";
 import { useAuth } from "../../context/AuthContext";
+import { ensureDraftItem, getDraftItems } from "../../utils/orderDraft";
 
 export default function SignInForm() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { login: setAuth, isAuthenticated } = useAuth();
+
+  const continueAfterAuth = () => {
+    const serviceId = searchParams.get("service");
+    if (serviceId) {
+      ensureDraftItem(serviceId);
+    }
+
+    if (serviceId || getDraftItems().length > 0) {
+      navigate("/orders", { replace: true });
+      return;
+    }
+
+    navigate("/dashboard", { replace: true });
+  };
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/dashboard", { replace: true });
+      continueAfterAuth();
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, searchParams]);
 
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
@@ -45,12 +61,7 @@ export default function SignInForm() {
 
     setAuth(data.token, data.user);
 
-    console.log("Token:", data.token);
-    console.log("User:", data.user);
-
-    console.log("Login response:", data);
-
-    navigate("/dashboard", { replace: true });
+    continueAfterAuth();
   } catch (error: unknown) {
     console.error(error);
 

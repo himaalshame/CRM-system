@@ -49,6 +49,101 @@ type CreateOrderItem = {
     quantity: number;
 };
 
+type PreparedOrderItem = {
+    serviceId: string;
+    unitPrice: number;
+    quantity: number;
+    lineTotal: number;
+};
+
+const mergeOrderItems = (items: CreateOrderItem[]): CreateOrderItem[] => {
+    const merged = new Map<string, number>();
+
+    items.forEach((item) => {
+        if (!Number.isInteger(item.quantity) || item.quantity < 1) {
+            throw new AppError(
+                "Quantity must be a positive integer",
+                400
+            );
+        }
+
+        merged.set(
+            item.serviceId,
+            (merged.get(item.serviceId) ?? 0) + item.quantity
+        );
+    });
+
+    return Array.from(merged.entries()).map(([serviceId, quantity]) => ({
+        serviceId,
+        quantity,
+    }));
+};
+
+const prepareOrderItems = async (
+    items: CreateOrderItem[]
+): Promise<{ orderItems: PreparedOrderItem[]; totalPrice: number }> => {
+    if (!items.length) {
+        throw new AppError(
+            "Order must contain at least one item",
+            400
+        );
+    }
+
+    const mergedItems = mergeOrderItems(items);
+    const uniqueServiceIds = mergedItems.map((item) => item.serviceId);
+
+    const services = await prisma.service.findMany({
+        where: {
+            id: {
+                in: uniqueServiceIds,
+            },
+        },
+    });
+
+    if (services.length !== uniqueServiceIds.length) {
+        throw new AppError(
+            "One or more services not found",
+            400
+        );
+    }
+
+    const inactiveService = services.find((service) => !service.isActive);
+    if (inactiveService) {
+        throw new AppError(
+            "Only active services can be ordered",
+            400
+        );
+    }
+
+    const orderItems = mergedItems.map((item) => {
+        const service = services.find(
+            (candidate) => candidate.id === item.serviceId
+        );
+
+        if (!service) {
+            throw new AppError("Service not found", 400);
+        }
+
+        const unitPrice = Number(service.price);
+        const lineTotal = Number((unitPrice * item.quantity).toFixed(2));
+
+        return {
+            serviceId: service.id,
+            unitPrice,
+            quantity: item.quantity,
+            lineTotal,
+        };
+    });
+
+    const totalPrice = Number(
+        orderItems
+            .reduce((sum, item) => sum + item.lineTotal, 0)
+            .toFixed(2)
+    );
+
+    return { orderItems, totalPrice };
+};
+
 type CreateOrderData = {
     clientId?: string;
     items: CreateOrderItem[];
@@ -117,64 +212,7 @@ export const createOrder = async (
         throw new AppError("Client not found", 404);
     }
 
-    const serviceIds = data.items.map(
-        (item) => item.serviceId
-    );
-
-    const services = await prisma.service.findMany({
-        where: {
-            id: {
-                in: serviceIds,
-            },
-            isActive: true,
-        },
-    });
-
-    if (services.length !== data.items.length) {
-        throw new AppError(
-            "One or more services not found",
-            400
-        );
-    }
-
-    const orderItems = data.items.map((item) => {
-        const service = services.find(
-            (service) => service.id === item.serviceId
-        );
-
-        if (!service) {
-            throw new AppError(
-                "Service not found",
-                400
-            );
-        }
-
-        if (
-            !Number.isInteger(item.quantity) ||
-            item.quantity < 1
-        ) {
-            throw new AppError(
-                "Quantity must be at least 1",
-                400
-            );
-        }
-
-        const unitPrice = service.price;
-        const total =
-            Number(unitPrice) * item.quantity;
-
-        return {
-            serviceId: service.id,
-            unitPrice,
-            quantity: item.quantity,
-            total,
-        };
-    });
-
-    const totalPrice = orderItems.reduce(
-        (sum, item) => sum + item.total,
-        0
-    );
+    const { orderItems, totalPrice } = await prepareOrderItems(data.items);
 
     return await prisma.$transaction(async (tx) => {
         const order = await tx.order.create({
@@ -271,7 +309,15 @@ export const getOrderById = async (
                 },
             },
 
-            projects: true,
+            projects: {
+                include: {
+                    projectEmployees: {
+                        include: {
+                            employee: true,
+                        },
+                    },
+                },
+            },
         },
     });
 
@@ -388,14 +434,7 @@ export const updateOrder = async (
         }
     }
 
-    let orderItemsData:
-        | Array<{
-            serviceId: string;
-            unitPrice: string;
-            quantity: number;
-        }>
-        | undefined;
-
+    let orderItemsData: PreparedOrderItem[] | undefined;
     let totalPrice: number | undefined;
 
     if (data.items) {
@@ -419,63 +458,9 @@ export const updateOrder = async (
             );
         }
 
-        const services = await prisma.service.findMany({
-            where: {
-                id: {
-                    in: data.items.map(
-                        (item) => item.serviceId
-                    ),
-                },
-                isActive: true,
-            },
-        });
-
-        if (
-            services.length !== data.items.length
-        ) {
-            throw new AppError(
-                "One or more services not found",
-                400
-            );
-        }
-
-        orderItemsData = data.items.map((item) => {
-            const service = services.find(
-                (candidate) =>
-                    candidate.id === item.serviceId
-            );
-
-            if (!service) {
-                throw new AppError(
-                    "Service not found",
-                    400
-                );
-            }
-
-            if (
-                !Number.isInteger(item.quantity) ||
-                item.quantity < 1
-            ) {
-                throw new AppError(
-                    "Quantity must be at least 1",
-                    400
-                );
-            }
-
-            return {
-                serviceId: service.id,
-                unitPrice: service.price.toString(),
-                quantity: item.quantity,
-            };
-        });
-
-        totalPrice = orderItemsData.reduce(
-            (sum, item) =>
-                sum +
-                Number(item.unitPrice) *
-                    item.quantity,
-            0
-        );
+        const prepared = await prepareOrderItems(data.items);
+        orderItemsData = prepared.orderItems;
+        totalPrice = prepared.totalPrice;
     }
 
     return await prisma.$transaction(async (tx) => {
@@ -551,6 +536,21 @@ export const updateOrder = async (
                     unitPrice: item.unitPrice,
                     quantity: item.quantity,
                 })),
+            });
+
+            return tx.order.findUniqueOrThrow({
+                where: {
+                    id: orderId,
+                },
+                include: {
+                    client: true,
+                    orderItems: {
+                        include: {
+                            service: true,
+                        },
+                    },
+                    projects: true,
+                },
             });
         }
 
