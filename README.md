@@ -356,6 +356,13 @@ This project is currently intended for **educational, portfolio, and development
 
 ---
 
+## Find me
+
+- **GitHub:** [himaalshame](https://github.com/himaalshame)
+- **LinkedIn:** [Ibrahim Ilshamy](https://www.linkedin.com/in/ibrahim-ilshamy/)
+- **Portfolio:** [himaalshame.github.io/my-Protfolio](https://himaalshame.github.io/my-Protfolio/)
+- **WhatsApp:** [Message me](https://wa.me/+201020679141)
+
 <div align="center">
 
 ⭐️ If you find this project useful or interesting, consider giving it a star!
