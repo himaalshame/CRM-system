@@ -87,6 +87,7 @@ export const register = async (data: RegisterData) => {
             data: {
                 email: data.email,
                 passwordHash,
+                // Public registration must never grant elevated permissions.
                 role: "CLIENT",
             },
         });

@@ -247,7 +247,7 @@ export default function Orders() {
                                     </h3>
                                     <div className="flex flex-wrap items-center gap-3">
                                         <Link
-                                            to="/explore/services"
+                                            to="/dashboard/services"
                                             className="text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-400"
                                         >
                                             + Add another service

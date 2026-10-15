@@ -243,7 +243,7 @@ export const getDashboard = async (
   return {
     role,
     stats: {
-      customers: 1,
+      customers: orders,
       employees: 0,
       orders,
       services,

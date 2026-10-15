@@ -8,7 +8,6 @@ import {
   GridIcon,
   HorizontaLDots,
   ListIcon,
-  LockIcon,
   TableIcon,
   UserCircleIcon,
 } from "../icons";
@@ -52,19 +51,13 @@ const navItems: NavItem[] = [
   {
     icon: <ListIcon />,
     name: "Services",
-    path: "/services",
+    path: "/dashboard/services",
     roles: ["ADMIN", "EMPLOYEE", "CLIENT"],
   },
   {
     icon: <TableIcon />,
     name: "Orders",
     path: "/orders",
-    roles: ["ADMIN", "EMPLOYEE", "CLIENT"],
-  },
-  {
-    icon: <LockIcon />,
-    name: "Settings",
-    path: "/settings",
     roles: ["ADMIN", "EMPLOYEE", "CLIENT"],
   },
 ];

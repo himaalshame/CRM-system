@@ -275,7 +275,7 @@ export default function PublicServices() {
 
                   <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                     <Link
-                      to={`/explore/services/${service.id}`}
+                      to={`/services/${service.id}`}
                       className="group/btn inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-800 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700 hover:shadow-md"
                     >
                       <span>View Details</span>

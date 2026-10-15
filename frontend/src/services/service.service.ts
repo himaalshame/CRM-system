@@ -59,3 +59,10 @@ export const restoreService = async (id: string): Promise<Service> => {
 
     return response.data.service;
 };
+
+// Get service by ID
+export const getServiceById = async (id: string): Promise<Service> => {
+    const response = await api.get(`/services/${id}`);
+
+    return response.data;
+};

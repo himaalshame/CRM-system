@@ -369,6 +369,13 @@ export default function Services() {
                                                         Request Service
                                                     </button>
                                                 )}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => navigate(`/service-details/${service.id}`)}
+                                                    className="text-sm font-medium text-gray-600 underline hover:text-brand-500 dark:text-gray-300"
+                                                >
+                                                    View Details
+                                                </button>
                                             </div>
                                         </td>
 

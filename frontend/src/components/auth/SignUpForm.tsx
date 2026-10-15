@@ -101,7 +101,7 @@ export default function SignUpForm() {
             </h1>
 
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Create your client account
+              Create a standard client account. New accounts do not receive admin or employee access.
             </p>
           </div>
 

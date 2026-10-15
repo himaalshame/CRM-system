@@ -74,7 +74,7 @@ export default function PublicHome() {
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Link
-                to="/explore/services"
+                to="/services"
                 className="group inline-flex items-center gap-2 rounded-xl bg-brand-500 px-7 py-3.5 font-semibold text-white shadow-lg shadow-brand-500/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-600 hover:shadow-xl hover:shadow-brand-500/25 active:translate-y-0"
               >
                 Explore Services
@@ -441,7 +441,7 @@ export default function PublicHome() {
               </p>
             </div>
             <Link
-              to="/explore/services"
+              to="/services"
               className="group inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-brand-600 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-200 hover:bg-brand-50 hover:shadow-md"
             >
               View All Services
@@ -518,14 +518,16 @@ export default function PublicHome() {
                           Starting from
                         </div>
                         <span className="text-lg font-bold text-gray-900">
-                          ${Number(service.price).toFixed(2)}
+                          EGP {new Intl.NumberFormat("en-EG", {
+                            maximumFractionDigits: 2,
+                          }).format(Number(service.price))}
                         </span>
                       </div>
                     </div>
 
                     <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                       <Link
-                        to={`/explore/services/${service.id}`}
+                        to={`/services/${service.id}`}
                         className="flex-1 inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white px-4 py-3 text-center text-sm font-semibold text-gray-800 transition-all duration-300 hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700"
                       >
                         View Details
@@ -591,7 +593,7 @@ export default function PublicHome() {
               </svg>
             </Link>
             <Link
-              to="/explore/services"
+              to="/services"
               className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-8 py-4 font-semibold text-white backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/10 active:translate-y-0"
             >
               Explore Services

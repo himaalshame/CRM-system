@@ -162,7 +162,7 @@ export default function PublicServiceDetail() {
             </p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               <Link
-                to="/explore/services"
+                to="/services"
                 className="group inline-flex items-center gap-2 rounded-xl bg-brand-500 px-7 py-3.5 font-semibold text-white shadow-lg shadow-brand-500/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-600 hover:shadow-xl hover:shadow-brand-500/25 active:translate-y-0"
               >
                 <span>Back to All Services</span>
@@ -211,7 +211,7 @@ export default function PublicServiceDetail() {
           </Link>
           <span className="text-gray-300">/</span>
           <Link
-            to="/explore/services"
+            to="/services"
             className="rounded-lg px-2 py-1 font-medium transition hover:bg-gray-100 hover:text-gray-900"
           >
             Services
@@ -285,7 +285,7 @@ export default function PublicServiceDetail() {
               </button>
 
               <Link
-                to="/explore/services"
+                to="/services"
                 className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-6 py-3.5 text-sm font-semibold text-gray-800 transition-all duration-300 hover:-translate-y-0.5 hover:border-gray-300 hover:bg-gray-50 hover:shadow-md active:translate-y-0"
               >
                 ← Back to All Services
@@ -429,7 +429,7 @@ export default function PublicServiceDetail() {
                       </svg>
                     </button>
                     <Link
-                      to="/explore/services"
+                      to="/services"
                       className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-7 py-3.5 font-semibold text-gray-800 transition-all duration-300 hover:-translate-y-0.5 hover:border-gray-300 hover:bg-gray-50 hover:shadow-md active:translate-y-0"
                     >
                       ← Back to All Services
